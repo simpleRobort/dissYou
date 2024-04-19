@@ -7,36 +7,49 @@
   </head>
   <body>
     <div id="box"></div>
+    <button id="btn">点我</button>
     <script>
       const box = document.getElementById("box");
+      const btn = document.getElementById("btn");
       const query = location.search;
       const queryParams = getSearch(query);
-      console.log("query", query, getSearch(query));
-      if (queryParams.name) {
-        const utterThis = new window.SpeechSynthesisUtterance(queryParams.name);
-        utterThis.onend = () => {
-          setTimeout(() => {
-            const utterThis2 = new window.SpeechSynthesisUtterance(
-              queryParams.name
-            );
-            window.speechSynthesis.speak(utterThis2);
-            utterThis2.onend = () => {
-              setTimeout(() => {
-                const utterThis3 = new window.SpeechSynthesisUtterance(
-                  "我要第死你"
-                );
-                window.speechSynthesis.speak(utterThis3);
-              },50);
-            };
-          }, 20);
-        };
-        window.speechSynthesis.speak(utterThis);
-      }
+      console.log("query", query, queryParams);
+      box.innerHTML = `二等兵${queryParams.name || ""},你还玩上了`;
+      btn.onclick = openVoice;
+      function openVoice() {
+        if (queryParams.name) {
+          const utterThis = new window.SpeechSynthesisUtterance(
+            queryParams.name
+          );
+          utterThis.onerror = (e) => {
+            console.log(e);
+          };
+          utterThis.onend = () => {
+            setTimeout(() => {
+              const utterThis2 = new window.SpeechSynthesisUtterance(
+                queryParams.name
+              );
+              window.speechSynthesis.speak(utterThis2);
+              utterThis2.onend = () => {
+                setTimeout(() => {
+                  const utterThis3 = new window.SpeechSynthesisUtterance(
+                    "我要第死你"
+                  );
+                  window.speechSynthesis.speak(utterThis3);
+                }, 50);
+              };
+            }, 20);
+          };
+          window.speechSynthesis.speak(utterThis);
 
+          console.log("queryParams", queryParams.name);
+        }
+      }
       function getSearch(str) {
         if (!str) {
           return {};
         }
+        str = decodeURI(str); //这个方法是给URL进行解析，解决中文乱码问题
         str = decodeURI(str); //这个方法是给URL进行解析，解决中文乱码问题
         str = str.slice(1);
         let obj = {};
