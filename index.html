@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>二等兵，你还玩上了</title>
+  </head>
+  <body>
+    <div id="box"></div>
+    <script>
+      const box = document.getElementById("box");
+      const query = location.search;
+      const queryParams = getSearch(query);
+      console.log("query", query, getSearch(query));
+      if (queryParams.name) {
+        const utterThis = new window.SpeechSynthesisUtterance(queryParams.name);
+        utterThis.onend = () => {
+          setTimeout(() => {
+            const utterThis2 = new window.SpeechSynthesisUtterance(
+              queryParams.name
+            );
+            window.speechSynthesis.speak(utterThis2);
+            utterThis2.onend = () => {
+              setTimeout(() => {
+                const utterThis3 = new window.SpeechSynthesisUtterance(
+                  "我要第死你"
+                );
+                window.speechSynthesis.speak(utterThis3);
+              },50);
+            };
+          }, 20);
+        };
+        window.speechSynthesis.speak(utterThis);
+      }
+
+      function getSearch(str) {
+        if (!str) {
+          return {};
+        }
+        str = decodeURI(str); //这个方法是给URL进行解析，解决中文乱码问题
+        str = str.slice(1);
+        let obj = {};
+        let arr = str.split("&");
+        for (let i = 0; i < arr.length; i++) {
+          arr[i] = arr[i].split("=");
+          obj[arr[i][0]] = arr[i][1];
+        }
+        return obj;
+      }
+    </script>
+  </body>
+</html>
